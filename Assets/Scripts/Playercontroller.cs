@@ -38,4 +38,18 @@ public class Playercontroller : MonoBehaviour
         }
         transform.position = newPosition;
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Right Wall"))
+        {
+            Destroy(gameObject);
+        }
+
+        if (collision.gameObject.CompareTag("Left Wall"))
+        {
+            Destroy(gameObject);
+        }
+    }
+
 }
