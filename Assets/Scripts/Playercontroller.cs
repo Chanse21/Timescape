@@ -50,6 +50,10 @@ public class Playercontroller : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
+            //If the player hits an object tagged as "Key"
+            if (collision.gameObject.CompareTag("Key"))
+            {
+                Destroy(collision.gameObject);
+            }
+        }
 }
