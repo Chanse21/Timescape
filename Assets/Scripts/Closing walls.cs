@@ -4,6 +4,7 @@ public class Closingwalls : MonoBehaviour
 {
     public Vector3 targetPosition; // The final position the wall will move to
     public float speed = 1f;       // Speed of wall movement
+    public bool canMove = true;
 
     private Vector3 initialPosition;
 
@@ -14,14 +15,11 @@ public class Closingwalls : MonoBehaviour
 
     void Update()
     {
-        // Move the wall towards the target position
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-
-        // Optional: Check if the wall has reached its target and stop movement
-        if (transform.position == targetPosition)
+        if (canMove) // Only move if canMove is true
         {
-            // For example, you could disable this script or trigger an event
-            // enabled = false; 
+            // Move the wall towards the target position
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
         }
+
     }
 }

@@ -1,59 +1,106 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Playercontroller : MonoBehaviour
 {
+
     public float movespeed = 5f;
+    public Vector3 jump;
+    public float jumpForce = 3.0f;
+    public bool isGrounded;
+
     Rigidbody rb;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public GameObject youWinUI;
+
+
+
     void Start()
+
     {
+
         rb = GetComponent<Rigidbody>();
+        if (youWinUI != null)
+            youWinUI.SetActive(false); // Make sure it's hidden at start
+
     }
 
-    // Update is called once per frame
-    void Update()
+
+
+    void FixedUpdate()
+
     {
-        Vector3 newPosition = transform.position;
 
-        if (Input.GetKey("d"))
+        float moveX = 0f;
+        float moveZ = 0f;
+
+
+
+        if (Input.GetKey("d")) moveX = 1f;
+
+        if (Input.GetKey("a")) moveX = -1f;
+
+        if (Input.GetKey("w")) moveZ = 1f;
+
+        if (Input.GetKey("s")) moveZ = -1f;
+
+        Vector3 move = new Vector3(moveX, 0f, moveZ).normalized * movespeed * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + move);
+
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            newPosition += Vector3.right * movespeed * Time.deltaTime;
+            rb.AddForce(jump * jumpForce, ForceMode.Impulse);
+            isGrounded = false;
         }
 
-        if (Input.GetKey("a"))
-        {
-            newPosition += Vector3.left * movespeed * Time.deltaTime;
-        }
-
-        if (Input.GetKey("w"))
-        {
-            newPosition += Vector3.forward * movespeed * Time.deltaTime;
-        }
-
-        if (Input.GetKey("s"))
-        {
-            newPosition += Vector3.back * movespeed * Time.deltaTime;
-        }
-        transform.position = newPosition;
     }
+
+
 
     private void OnCollisionEnter(Collision collision)
+
     {
-        if (collision.gameObject.CompareTag("Right Wall"))
+
+        if (collision.gameObject.CompareTag("Right Wall") || collision.gameObject.CompareTag("Left Wall"))
+
         {
+
             Destroy(gameObject);
+
         }
 
-        if (collision.gameObject.CompareTag("Left Wall"))
+        if (collision.gameObject.CompareTag("Ground"))
         {
-            Destroy(gameObject);
+            isGrounded = true;
         }
-            //If the player hits an object tagged as "Key"
-            if (collision.gameObject.CompareTag("Key"))
+
+
+
+        if (collision.gameObject.CompareTag("Key"))
+
+        {
+
+            Destroy(collision.gameObject);
+
+
+
+            // Stop all walls
+
+            Closingwalls[] walls = FindObjectsOfType<Closingwalls>();
+
+            foreach (Closingwalls wall in walls)
+
             {
-                Destroy(collision.gameObject);
+
+                wall.canMove = false;
+
             }
+            //Shoow "You Win" UI
+            if (youWinUI != null)
+                youWinUI.SetActive(true);
         }
+
+    }
+
 }
