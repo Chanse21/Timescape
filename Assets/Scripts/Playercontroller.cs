@@ -2,16 +2,23 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Playercontroller : MonoBehaviour
 {
 
     public float movespeed = 5f;
+
     public Vector3 jump;
+
     public float jumpForce = 3.0f;
+
     public bool isGrounded;
 
+
+
     Rigidbody rb;
+
     public GameObject youWinUI;
 
 
@@ -21,8 +28,10 @@ public class Playercontroller : MonoBehaviour
     {
 
         rb = GetComponent<Rigidbody>();
+
         if (youWinUI != null)
-            youWinUI.SetActive(false); // Make sure it's hidden at start
+
+            youWinUI.SetActive(false);
 
     }
 
@@ -33,6 +42,7 @@ public class Playercontroller : MonoBehaviour
     {
 
         float moveX = 0f;
+
         float moveZ = 0f;
 
 
@@ -45,13 +55,22 @@ public class Playercontroller : MonoBehaviour
 
         if (Input.GetKey("s")) moveZ = -1f;
 
+
+
         Vector3 move = new Vector3(moveX, 0f, moveZ).normalized * movespeed * Time.fixedDeltaTime;
+
         rb.MovePosition(rb.position + move);
 
+
+
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+
         {
+
             rb.AddForce(jump * jumpForce, ForceMode.Impulse);
+
             isGrounded = false;
+
         }
 
     }
@@ -62,20 +81,32 @@ public class Playercontroller : MonoBehaviour
 
     {
 
+        // Destroy player if it hits a wall
+
         if (collision.gameObject.CompareTag("Right Wall") || collision.gameObject.CompareTag("Left Wall"))
 
         {
 
             Destroy(gameObject);
+            SceneManager.LoadScene("Replay Scene");
 
         }
+
+
+
+        // Allow jumping again
 
         if (collision.gameObject.CompareTag("Ground"))
+
         {
+
             isGrounded = true;
+
         }
 
 
+
+        // Collect key
 
         if (collision.gameObject.CompareTag("Key"))
 
@@ -85,7 +116,7 @@ public class Playercontroller : MonoBehaviour
 
 
 
-            // Stop all walls
+            // Stop all closing walls
 
             Closingwalls[] walls = FindObjectsOfType<Closingwalls>();
 
@@ -96,10 +127,34 @@ public class Playercontroller : MonoBehaviour
                 wall.canMove = false;
 
             }
-            //Shoow "You Win" UI
+
+
+
+            // Show “You Win” UI
+
             if (youWinUI != null)
+
                 youWinUI.SetActive(true);
+
+
+
+            // Load the next scene after a short delay (optional)
+
+            Invoke("LoadReplayScene", 2f);
+
         }
+
+    }
+
+
+
+    // Function that loads the next scene
+
+    void LoadReplayScene()
+
+    {
+
+        SceneManager.LoadScene("Replay Scene");
 
     }
 
